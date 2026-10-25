@@ -29,6 +29,8 @@ http.createServer(async(req,res)=>{
       if(!Number.isInteger(x)||!Number.isInteger(y)||x<8||y<8||x*y>160000)throw Error('Invalid mesh');
       if(!d.section.bars.every(b=>[b.x,b.y,b.area].every(finite)&&b.area>0)||!d.demands.every(v=>[v.pu,v.mux,v.muy].every(finite)))throw Error('Invalid load');
       out=core.analyse(d);
+      // Typed arrays stringify as numeric-keyed objects; send a JSON array for 3D rendering.
+      if(out?.mesh?.xyz) out.mesh.xyz=Array.from(out.mesh.xyz);
     }else if(req.url==='/api/creep'){
       if(![d.rh,d.t0,d.h0,d.fcm].every(finite))throw Error('Invalid creep input');out=core.creepCoefficient(d);
     }else{
