@@ -15,8 +15,8 @@ http.createServer(async(req,res)=>{
   const origin=req.headers.origin;
   const pathname=new URL(req.url,'http://localhost').pathname;
   if(origin&&!allowed.includes(origin))return reply(res,403,{error:'Origin not allowed'},null);
-  if(req.method==='OPTIONS'){res.writeHead(204,{'Access-Control-Allow-Origin':origin||'','Access-Control-Allow-Methods':'POST,GET,OPTIONS','Access-Control-Allow-Headers':'Content-Type'});return res.end();}
-  if(req.method==='GET'&&pathname==='/health')return reply(res,200,{status:'ok'},origin);
+  if(req.method==='OPTIONS'){res.writeHead(204,{'Access-Control-Allow-Origin':origin||'','Vary':'Origin','Access-Control-Allow-Methods':'POST,GET,OPTIONS','Access-Control-Allow-Headers':'Content-Type','Access-Control-Max-Age':'600'});return res.end();}
+  if(req.method==='GET'&&pathname==='/health')return reply(res,200,{status:'ok',api:'MBColumnLite',version:'2026-10-26-cors-fix',originAllowed:!origin||allowed.includes(origin)},origin);
   if(req.method!=='POST'||!['/api/analyse','/api/creep','/api/slenderness'].includes(pathname))return reply(res,404,{error:'Not found'},origin);
   const ip=req.headers['x-forwarded-for']?.split(',')[0]||req.socket.remoteAddress,now=Date.now(),limit=counts.get(ip)||{n:0,until:now+60000};
   if(now>limit.until){limit.n=0;limit.until=now+60000;}counts.set(ip,limit);if(++limit.n>20)return reply(res,429,{error:'Rate limited'},origin);
