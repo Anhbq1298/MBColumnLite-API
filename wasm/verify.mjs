@@ -1,0 +1,15 @@
+import {readFileSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const bytes=readFileSync(new URL('./fibre.wasm',import.meta.url));
+const m=await WebAssembly.instantiate(bytes,{env:{pow:Math.pow}});
+const {memory,set_bars,result_ptr,integrate_rect}=m.instance.exports;
+assert(memory && set_bars && integrate_rect);
+const ptr=4096;
+new Float64Array(memory.buffer,ptr,4).set([80,70,490.8738521,0]);
+set_bars(ptr,1);
+const args=[600,600,40,40,1,0,300,600,.0035,-.0035,30,.85,1,1.5,.002,2,0,500,1.15,200000];
+integrate_rect(...args);
+const out=new Float64Array(memory.buffer,result_ptr(),3);
+assert(out.every(Number.isFinite));
+assert(out[0]>0);
+console.log('WASM fibre smoke test:',[...out]);
