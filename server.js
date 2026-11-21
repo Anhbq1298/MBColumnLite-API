@@ -3,7 +3,7 @@ const http=require('node:http');
 const {createMBColumnCore}=require('./mbcolumn-core');
 const core=createMBColumnCore();
 const PORT=Number(process.env.PORT||8787);
-const allowed=[...new Set([...((process.env.ALLOWED_ORIGINS||'').split(',').map(s=>s.trim()).filter(Boolean)), 'https://anhbq1298.github.io', 'https://mcalcplatform.io', 'http://localhost:8000'])];
+const allowed=[...new Set([...((process.env.ALLOWED_ORIGINS||'').split(',').map(s=>s.trim()).filter(Boolean)), 'https://anhbq1298.github.io', 'https://mcalcplatform.dev', 'http://localhost:8000'])];
 const finite=n=>typeof n==='number'&&Number.isFinite(n);
 const counts=new Map();
 function reply(res,status,data,origin){
